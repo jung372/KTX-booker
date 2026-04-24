@@ -9,8 +9,25 @@ CONFIG_PATH = Path(__file__).parent / "config.json"
 ENV_PATH = Path(__file__).parent / ".env"
 
 
+# GitHub Secrets / 환경변수 → config 키 매핑
+_ENV_MAP = {
+    "korail_id":        "KORAIL_ID",
+    "korail_pw":        "KORAIL_PW",
+    "telegram_token":   "TELEGRAM_TOKEN",
+    "telegram_chat_id": "TELEGRAM_CHAT_ID",
+}
+
+# primary_journey 환경변수 매핑
+_JOURNEY_ENV_MAP = {
+    "dep_station": "JOURNEY_DEP_STATION",
+    "arr_station": "JOURNEY_ARR_STATION",
+    "dep_date":    "JOURNEY_DATE",
+    "dep_time":    "JOURNEY_TIME",
+}
+
+
 def load_config() -> dict:
-    """config.json에서 설정을 로드합니다. 파일이 없거나 키가 누락되면 기본값으로 보완합니다."""
+    """config.json을 로드하고 환경변수(GitHub Secrets)가 있으면 우선 적용합니다."""
     defaults = _default_config()
     if CONFIG_PATH.exists():
         with open(CONFIG_PATH, "r", encoding="utf-8") as f:
@@ -18,8 +35,25 @@ def load_config() -> dict:
         for k, v in defaults.items():
             if k not in stored:
                 stored[k] = v
-        return stored
-    return defaults
+        config = stored
+    else:
+        config = defaults
+
+    # 환경변수 / GitHub Secrets 우선 적용
+    for field, env_key in _ENV_MAP.items():
+        val = get_env(env_key)
+        if val:
+            config[field] = val
+
+    # primary_journey 환경변수 적용
+    pj = config.get("primary_journey", {})
+    for field, env_key in _JOURNEY_ENV_MAP.items():
+        val = get_env(env_key)
+        if val:
+            pj[field] = val
+    config["primary_journey"] = pj
+
+    return config
 
 
 def save_config(config: dict) -> None:

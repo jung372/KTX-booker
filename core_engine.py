@@ -20,15 +20,21 @@ class ReservationEngine:
         self._thread: Optional[threading.Thread] = None
         self._attempt_count = 0
 
-    def start(self) -> None:
-        """엔진을 백그라운드 스레드로 시작합니다."""
+    def start(self, daemon: bool = True) -> None:
+        """엔진을 백그라운드 스레드로 시작합니다.
+        daemon=False 시 메인 스레드 종료 후에도 엔진이 계속 실행됩니다(CLI 용)."""
         if self._running:
             return
         self._running = True
         self._attempt_count = 0
-        self._thread = threading.Thread(target=self._run_loop, daemon=True)
+        self._thread = threading.Thread(target=self._run_loop, daemon=daemon)
         self._thread.start()
         self._log("모니터링 시작")
+
+    def wait(self) -> None:
+        """엔진 스레드가 완전히 종료될 때까지 블로킹합니다(CLI 용)."""
+        if self._thread and self._thread.is_alive():
+            self._thread.join()
 
     def stop(self) -> None:
         """엔진을 중지합니다."""

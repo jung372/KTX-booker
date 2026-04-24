@@ -17,8 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 def create_browser(playwright):
-    """Playwright 브라우저 인스턴스를 생성합니다."""
-    browser = playwright.chromium.launch(headless=False)
+    """Playwright 브라우저 인스턴스를 생성합니다.
+    CI 환경(GitHub Actions 등)에서는 headless 모드로 자동 전환됩니다."""
+    import os
+    headless = os.environ.get("CI", "").lower() in ("true", "1", "yes")
+    browser = playwright.chromium.launch(headless=headless)
     context = browser.new_context(
         user_agent=(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
