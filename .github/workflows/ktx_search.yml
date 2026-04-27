@@ -1,0 +1,62 @@
+name: KTX 열차 조회
+
+on:
+  workflow_dispatch:
+    inputs:
+      dep_station:
+        description: "출발역"
+        required: true
+        default: "서울"
+      arr_station:
+        description: "도착역"
+        required: true
+        default: "부산"
+      dep_date:
+        description: "날짜 (YYYY-MM-DD)"
+        required: true
+      dep_time:
+        description: "희망 시간 (HH:MM)"
+        required: true
+        default: "06:00"
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    env:
+      KORAIL_ID:           ${{ secrets.KORAIL_ID }}
+      KORAIL_PW:           ${{ secrets.KORAIL_PW }}
+      JOURNEY_DEP_STATION: ${{ github.event.inputs.dep_station }}
+      JOURNEY_ARR_STATION: ${{ github.event.inputs.arr_station }}
+      JOURNEY_DATE:        ${{ github.event.inputs.dep_date }}
+      JOURNEY_TIME:        ${{ github.event.inputs.dep_time }}
+      CI: "true"
+
+    steps:
+      - name: 코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: Python 설정
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: 패키지 설치
+        run: |
+          pip install -r requirements.txt
+          playwright install --with-deps chromium
+
+      - name: 열차 조회
+        run: python search_trains.py
+
+      - name: 결과 커밋 & 푸시
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/search_results.json
+          git diff --staged --quiet || git commit -m "chore: update search results [skip ci]"
+          git push
