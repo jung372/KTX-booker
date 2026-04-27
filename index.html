@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KTX 특실 자동 예약</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #1a3c6e;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .subtitle {
+      font-size: 0.85rem;
+      color: #718096;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 28px 32px;
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 4px;
+      margin-top: 14px;
+    }
+    label:first-of-type { margin-top: 0; }
+
+    input, select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid #cbd5e0;
+      border-radius: 7px;
+      font-size: 0.9rem;
+      color: #2d3748;
+      background: #f7fafc;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: #fff;
+    }
+
+    .row { display: flex; gap: 12px; }
+    .row > div { flex: 1; }
+
+    .hint {
+      font-size: 0.75rem;
+      color: #a0aec0;
+      margin-top: 4px;
+    }
+
+    .pat-toggle {
+      font-size: 0.75rem;
+      color: #3b82f6;
+      cursor: pointer;
+      text-decoration: underline;
+      float: right;
+      margin-top: -20px;
+    }
+
+    button.run-btn {
+      width: 100%;
+      margin-top: 22px;
+      padding: 12px;
+      background: #1a3c6e;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button.run-btn:hover { background: #2a527a; }
+    button.run-btn:disabled { background: #a0aec0; cursor: not-allowed; }
+
+    #toast {
+      display: none;
+      margin-top: 4px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    #toast.success { background: #c6f6d5; color: #22543d; display: block; }
+    #toast.error   { background: #fed7d7; color: #742a2a; display: block; }
+
+    .runs-card { max-width: 480px; }
+    #run-list { list-style: none; }
+    #run-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f4f8;
+      font-size: 0.83rem;
+      color: #4a5568;
+    }
+    #run-list li:last-child { border-bottom: none; }
+    .badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+    .badge.completed   { background: #c6f6d5; color: #276749; }
+    .badge.in_progress { background: #bee3f8; color: #2a4365; }
+    .badge.failure     { background: #fed7d7; color: #742a2a; }
+    .badge.cancelled   { background: #e2e8f0; color: #718096; }
+
+    .refresh-btn {
+      background: none;
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      color: #4a5568;
+      float: right;
+    }
+    .refresh-btn:hover { background: #f0f4f8; }
+
+    footer {
+      margin-top: 20px;
+      font-size: 0.75rem;
+      color: #a0aec0;
+      text-align: center;
+    }
+    footer a { color: #3b82f6; text-decoration: none; }
+  </style>
+</head>
+<body>
+
+<h1>🚄 KTX 특실 자동 예약</h1>
+<p class="subtitle">GitHub Actions 기반 · 특실 빈 자리 감지 즉시 예약</p>
+
+<!-- 예약 설정 카드 -->
+<div class="card">
+  <h2>예약 설정</h2>
+
+  <div class="row">
+    <div>
+      <label for="dep_station">출발역</label>
+      <select id="dep_station"></select>
+    </div>
+    <div>
+      <label for="arr_station">도착역</label>
+      <select id="arr_station"></select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div>
+      <label for="dep_date">날짜</label>
+      <input type="date" id="dep_date" />
+    </div>
+    <div>
+      <label for="dep_time">희망 시간 이후</label>
+      <input type="time" id="dep_time" value="06:00" />
+    </div>
+  </div>
+
+  <label for="target_train_no">열차 번호 (선택)</label>
+  <input type="text" id="target_train_no" placeholder="예: 101  — 비워두면 조건 맞는 첫 특실 자동 선택" />
+
+  <label>GitHub Personal Access Token
+    <span class="pat-toggle" onclick="togglePat()">👁 보기/숨기기</span>
+  </label>
+  <input type="password" id="pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+  <p class="hint">
+    토큰은 브라우저에만 저장되며 서버로 전송되지 않습니다.
+    <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=KTX-booker" target="_blank">발급하기 →</a>
+  </p>
+
+  <button class="run-btn" id="run-btn" onclick="runWorkflow()">🚀 예약 봇 시작</button>
+  <div id="toast"></div>
+</div>
+
+<!-- 최근 실행 카드 -->
+<div class="card runs-card">
+  <h2>최근 실행 현황
+    <button class="refresh-btn" onclick="loadRuns()">↻ 새로고침</button>
+  </h2>
+  <ul id="run-list"><li style="color:#a0aec0;">토큰을 입력하면 실행 목록이 표시됩니다.</li></ul>
+</div>
+
+<footer>
+  <a href="https://github.com/jung372/KTX-booker" target="_blank">GitHub 저장소</a> ·
+  Actions 실행은 GitHub 서버에서 처리됩니다
+</footer>
+
+<script>
+  const REPO  = 'jung372/KTX-booker';
+  const WF_ID = 'ktx_bot.yml';
+
+  const STATIONS = [
+    '서울','용산','영등포','수원','천안아산','오송','대전',
+    '김천구미','동대구','경주','포항','울산','부산',
+    '광주송정','목포','여수엑스포','전주','익산',
+    '강릉','진부','평창','둔내','횡성','만종','원주',
+    '청량리','상봉'
+  ];
+
+  function populateStations() {
+    ['dep_station','arr_station'].forEach(id => {
+      const sel = document.getElementById(id);
+      STATIONS.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = opt.textContent = s;
+        sel.appendChild(opt);
+      });
+    });
+    document.getElementById('arr_station').value = '부산';
+    // 오늘 날짜 기본값
+    const today = new Date();
+    today.setDate(today.getDate() + 1);
+    document.getElementById('dep_date').value = today.toISOString().slice(0,10);
+  }
+
+  function savePat(val) { localStorage.setItem('ktx_pat', val); }
+  function loadPat()    { return localStorage.getItem('ktx_pat') || ''; }
+  function togglePat()  {
+    const el = document.getElementById('pat');
+    el.type = el.type === 'password' ? 'text' : 'password';
+  }
+
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = type;
+    if (type === 'success') setTimeout(() => { t.className = ''; t.style.display = 'none'; }, 5000);
+  }
+
+  async function runWorkflow() {
+    const pat = document.getElementById('pat').value.trim();
+    if (!pat) { showToast('GitHub Personal Access Token을 입력하세요.', 'error'); return; }
+    savePat(pat);
+
+    const dep_station    = document.getElementById('dep_station').value;
+    const arr_station    = document.getElementById('arr_station').value;
+    const dep_date       = document.getElementById('dep_date').value;
+    const dep_time       = document.getElementById('dep_time').value;
+    const target_train_no = document.getElementById('target_train_no').value.trim();
+
+    if (!dep_date) { showToast('날짜를 입력하세요.', 'error'); return; }
+
+    const btn = document.getElementById('run-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ 요청 중...';
+
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${REPO}/actions/workflows/${WF_ID}/dispatches`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${pat}`,
+            'Accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ref: 'main',
+            inputs: { dep_station, arr_station, dep_date, dep_time, target_train_no }
+          })
+        }
+      );
+
+      if (res.status === 204) {
+        showToast('✅ 봇이 시작됐습니다! 아래에서 진행 상황을 확인하세요.', 'success');
+        setTimeout(loadRuns, 3000);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        showToast(`오류 (${res.status}): ${body.message || '요청 실패'}`, 'error');
+      }
+    } catch (e) {
+      showToast(`네트워크 오류: ${e.message}`, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🚀 예약 봇 시작';
+    }
+  }
+
+  async function loadRuns() {
+    const pat = document.getElementById('pat').value.trim() || loadPat();
+    if (!pat) return;
+
+    const list = document.getElementById('run-list');
+    list.innerHTML = '<li style="color:#a0aec0;">불러오는 중...</li>';
+
+    try {
+      const res = await fetch(
+        `https://api.github.com/repos/${REPO}/actions/workflows/${WF_ID}/runs?per_page=5`,
+        { headers: { 'Authorization': `Bearer ${pat}`, 'Accept': 'application/vnd.github+json' } }
+      );
+      const data = await res.json();
+      const runs = data.workflow_runs || [];
+
+      if (!runs.length) {
+        list.innerHTML = '<li style="color:#a0aec0;">실행 기록이 없습니다.</li>';
+        return;
+      }
+
+      list.innerHTML = runs.map(r => {
+        const inputs = r.display_title || '-';
+        const date   = new Date(r.created_at).toLocaleString('ko-KR');
+        const status = r.status === 'completed' ? r.conclusion : r.status;
+        const label  = {
+          completed: '완료', failure: '실패', cancelled: '취소됨',
+          in_progress: '실행 중', queued: '대기 중'
+        }[status] || status;
+
+        return `<li>
+          <span>
+            <a href="${r.html_url}" target="_blank" style="color:#3b82f6;text-decoration:none;">#${r.run_number}</a>
+            &nbsp;${date}
+          </span>
+          <span class="badge ${status}">${label}</span>
+        </li>`;
+      }).join('');
+    } catch {
+      list.innerHTML = '<li style="color:#e53e3e;">불러오기 실패</li>';
+    }
+  }
+
+  // 초기화
+  populateStations();
+  document.getElementById('pat').value = loadPat();
+  if (loadPat()) loadRuns();
+</script>
+</body>
+</html>
