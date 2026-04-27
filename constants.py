@@ -1,8 +1,8 @@
 # 코레일 역 코드 및 고정 URL 상수
 
-KORAIL_MAIN_URL = "https://www.letskorail.com"
-KORAIL_LOGIN_URL = "https://www.letskorail.com/korail/com/login.do"
-KORAIL_TICKET_URL = "https://www.letskorail.com/ebizprd/EbizPrdTicketpr21100W.do"
+KORAIL_MAIN_URL  = "https://www.korail.com"
+KORAIL_LOGIN_URL = "https://www.korail.com/korail/com/login.do"
+KORAIL_TICKET_URL = "https://www.korail.com/ebizprd/EbizPrdTicketpr21100W.do"
 
 # 주요 역 코드 (코레일 기준)
 STATION_CODES = {
@@ -43,7 +43,7 @@ SEAT_TYPE_GENERAL = "일반실"
 DEFAULT_SEARCH_INTERVAL_MIN = 1.0  # 초
 DEFAULT_SEARCH_INTERVAL_MAX = 3.5  # 초
 MAX_RETRY_COUNT = 999
-LOGIN_WAIT_TIMEOUT = 10  # 초
+LOGIN_WAIT_TIMEOUT = 30  # 초
 
 # 텔레그램
 TELEGRAM_API_BASE = "https://api.telegram.org/bot{token}/sendMessage"

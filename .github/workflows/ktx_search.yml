@@ -73,3 +73,11 @@ jobs:
           git add data/search_results.json
           git diff --staged --quiet || git commit -m "chore: update search results [skip ci]"
           git push
+
+      - name: 디버그 스크린샷 업로드 (실패 시)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-screenshots-search
+          path: "*.png"
+          if-no-files-found: ignore

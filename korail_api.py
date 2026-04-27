@@ -35,24 +35,114 @@ def create_browser(playwright):
 
 def login(page, korail_id: str, korail_pw: str) -> bool:
     """코레일에 로그인합니다."""
+    # 새 korail.com(SPA) 및 구 letskorail.com 모두 시도하는 선택자 목록
+    _ID_SELECTORS = [
+        "#txtMember",          # 구 letskorail.com
+        "#loginForm_memberNo", # korail.com 변형 1
+        "#memberNo",
+        "#userId",
+        "#id",
+        "input[name='memberNo']",
+        "input[name='userId']",
+        "input[name='id']",
+        "input[placeholder*='아이디']",
+        "input[placeholder*='이메일']",
+        "input[type='text']:visible",  # 최후 수단
+    ]
+    _PW_SELECTORS = [
+        "#txtPwd",             # 구 letskorail.com
+        "#loginForm_pwd",
+        "#pwd",
+        "#userPw",
+        "input[name='pwd']",
+        "input[name='userPw']",
+        "input[type='password']:visible",
+    ]
+    _BTN_SELECTORS = [
+        ".btn_login",
+        "button[type='submit']",
+        "input[type='submit']",
+        "button:has-text('로그인')",
+        "a:has-text('로그인'):visible",
+    ]
+
     try:
-        page.goto(KORAIL_LOGIN_URL, timeout=LOGIN_WAIT_TIMEOUT * 1000)
-        _random_delay()
-        page.fill("#txtMember", korail_id)
+        logger.info(f"로그인 페이지 접속: {KORAIL_LOGIN_URL}")
+        page.goto(KORAIL_LOGIN_URL, timeout=LOGIN_WAIT_TIMEOUT * 1000,
+                  wait_until="domcontentloaded")
+        # SPA 렌더링 대기
+        page.wait_for_load_state("networkidle", timeout=LOGIN_WAIT_TIMEOUT * 1000)
+        _random_delay(1.5, 2.5)
+
+        logger.info(f"현재 URL: {page.url}  /  타이틀: {page.title()}")
+
+        # ── 아이디 입력란 탐색 ──────────────────────────
+        id_sel = _find_selector(page, _ID_SELECTORS)
+        if not id_sel:
+            _save_screenshot(page, "debug_login_no_id.png")
+            logger.error("아이디 입력란을 찾지 못했습니다. 스크린샷을 확인하세요.")
+            return False
+
+        page.fill(id_sel, korail_id)
         _random_delay(0.3, 0.8)
-        page.fill("#txtPwd", korail_pw)
+
+        # ── 비밀번호 입력란 탐색 ───────────────────────
+        pw_sel = _find_selector(page, _PW_SELECTORS)
+        if not pw_sel:
+            _save_screenshot(page, "debug_login_no_pw.png")
+            logger.error("비밀번호 입력란을 찾지 못했습니다. 스크린샷을 확인하세요.")
+            return False
+
+        page.fill(pw_sel, korail_pw)
         _random_delay(0.5, 1.0)
-        page.click(".btn_login")
+
+        # ── 로그인 버튼 클릭 ───────────────────────────
+        btn_sel = _find_selector(page, _BTN_SELECTORS)
+        if not btn_sel:
+            _save_screenshot(page, "debug_login_no_btn.png")
+            logger.error("로그인 버튼을 찾지 못했습니다. 스크린샷을 확인하세요.")
+            return False
+
+        page.click(btn_sel)
         page.wait_for_load_state("networkidle", timeout=LOGIN_WAIT_TIMEOUT * 1000)
 
-        if "로그인" not in page.title():
-            logger.info("로그인 성공")
-            return True
-        logger.error("로그인 실패: 아이디 또는 비밀번호를 확인하세요.")
-        return False
+        title = page.title()
+        url   = page.url
+        logger.info(f"로그인 후 URL: {url}  /  타이틀: {title}")
+
+        if "로그인" in title or "login" in url.lower():
+            _save_screenshot(page, "debug_login_failed.png")
+            logger.error("로그인 실패: 아이디 또는 비밀번호를 확인하세요.")
+            return False
+
+        logger.info("로그인 성공")
+        return True
+
     except Exception as e:
+        _save_screenshot(page, "debug_login_error.png")
         logger.error(f"로그인 오류: {e}")
         return False
+
+
+def _find_selector(page, selectors: list) -> Optional[str]:
+    """선택자 목록을 순서대로 시도해 첫 번째로 보이는 것을 반환합니다."""
+    for sel in selectors:
+        try:
+            loc = page.locator(sel)
+            if loc.count() > 0 and loc.first.is_visible():
+                logger.info(f"선택자 발견: {sel}")
+                return sel
+        except Exception:
+            continue
+    return None
+
+
+def _save_screenshot(page, filename: str) -> None:
+    try:
+        page.screenshot(path=filename, full_page=True)
+        logger.info(f"스크린샷 저장: {filename}")
+    except Exception as e:
+        logger.warning(f"스크린샷 저장 실패: {e}")
 
 
 def search_trains(page, journey: dict) -> list[dict]:
