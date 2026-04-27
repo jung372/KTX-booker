@@ -18,6 +18,10 @@ on:
         description: "희망 시간 (HH:MM, 이 시각 이후 첫 특실 예약)"
         required: true
         default: "06:00"
+      target_train_no:
+        description: "열차 번호 (예: 101) - 비워두면 해당 시간 이후 첫 특실 자동 선택"
+        required: false
+        default: ""
 
 jobs:
   reserve:
@@ -31,11 +35,12 @@ jobs:
       TELEGRAM_TOKEN:     ${{ secrets.TELEGRAM_TOKEN }}
       TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
       # ── workflow_dispatch 입력 → 여정 환경변수 ───────
-      JOURNEY_DEP_STATION: ${{ github.event.inputs.dep_station }}
-      JOURNEY_ARR_STATION: ${{ github.event.inputs.arr_station }}
-      JOURNEY_DATE:        ${{ github.event.inputs.dep_date }}
-      JOURNEY_TIME:        ${{ github.event.inputs.dep_time }}
-      CI: "true"           # headless 모드 강제 활성화
+      JOURNEY_DEP_STATION:    ${{ github.event.inputs.dep_station }}
+      JOURNEY_ARR_STATION:    ${{ github.event.inputs.arr_station }}
+      JOURNEY_DATE:           ${{ github.event.inputs.dep_date }}
+      JOURNEY_TIME:           ${{ github.event.inputs.dep_time }}
+      JOURNEY_TARGET_TRAIN_NO: ${{ github.event.inputs.target_train_no }}
+      CI: "true"              # headless 모드 강제 활성화
 
     steps:
       - name: 코드 체크아웃

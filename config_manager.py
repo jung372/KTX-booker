@@ -19,10 +19,11 @@ _ENV_MAP = {
 
 # primary_journey 환경변수 매핑
 _JOURNEY_ENV_MAP = {
-    "dep_station": "JOURNEY_DEP_STATION",
-    "arr_station": "JOURNEY_ARR_STATION",
-    "dep_date":    "JOURNEY_DATE",
-    "dep_time":    "JOURNEY_TIME",
+    "dep_station":     "JOURNEY_DEP_STATION",
+    "arr_station":     "JOURNEY_ARR_STATION",
+    "dep_date":        "JOURNEY_DATE",
+    "dep_time":        "JOURNEY_TIME",
+    "target_train_no": "JOURNEY_TARGET_TRAIN_NO",
 }
 
 
