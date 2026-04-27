@@ -15,32 +15,43 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 40px 16px 60px;
+      padding: 36px 16px 60px;
     }
 
-    h1 { font-size: 1.55rem; font-weight: 700; color: #1a3c6e; margin-bottom: 6px; text-align: center; }
-    .subtitle { font-size: 0.82rem; color: #718096; margin-bottom: 28px; text-align: center; }
+    h1 { font-size: 1.5rem; font-weight: 700; color: #1a3c6e; margin-bottom: 6px; text-align: center; }
+    .subtitle { font-size: 0.82rem; color: #718096; margin-bottom: 24px; text-align: center; }
 
     .card {
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      padding: 24px 28px;
+      padding: 22px 26px;
       width: 100%;
       max-width: 500px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .card-title {
       font-size: 0.88rem;
       font-weight: 700;
       color: #2d3748;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       padding-bottom: 10px;
       border-bottom: 1px solid #e2e8f0;
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: space-between;
     }
+
+    /* 스케줄 상태 배지 */
+    .schedule-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+    .schedule-badge.ready   { background: #c6f6d5; color: #276749; }
+    .schedule-badge.loading { background: #bee3f8; color: #2a4365; }
+    .schedule-badge.none    { background: #fed7d7; color: #742a2a; }
 
     label {
       display: block;
@@ -74,25 +85,25 @@
     .pat-row label { margin: 0; }
     .pat-toggle { font-size: 0.72rem; color: #3b82f6; cursor: pointer; }
 
-    /* 버튼 */
     .btn {
       width: 100%;
-      margin-top: 18px;
+      margin-top: 16px;
       padding: 11px;
       border: none;
       border-radius: 8px;
-      font-size: 0.95rem;
+      font-size: 0.93rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.15s, opacity 0.15s;
     }
-    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-search { background: #2b6cb0; color: #fff; }
     .btn-search:hover:not(:disabled) { background: #2c5282; }
     .btn-book   { background: #276749; color: #fff; }
     .btn-book:hover:not(:disabled)   { background: #22543d; }
+    .btn-live   { background: #744210; color: #fff; font-size: 0.82rem; margin-top: 10px; }
+    .btn-live:hover:not(:disabled)   { background: #5c3209; }
 
-    /* 토스트 */
     .toast {
       display: none;
       margin-top: 10px;
@@ -103,82 +114,64 @@
     }
     .toast.ok  { display: block; background: #c6f6d5; color: #22543d; }
     .toast.err { display: block; background: #fed7d7; color: #742a2a; }
+    .toast.info { display: block; background: #bee3f8; color: #2a4365; }
 
-    /* 진행 상태 */
-    #search-status {
+    #live-status {
       display: none;
-      margin-top: 14px;
+      margin-top: 12px;
       text-align: center;
-      font-size: 0.83rem;
+      font-size: 0.82rem;
       color: #4a5568;
     }
     .spinner {
       display: inline-block;
-      width: 16px; height: 16px;
+      width: 14px; height: 14px;
       border: 2px solid #cbd5e0;
       border-top-color: #3b82f6;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       vertical-align: middle;
-      margin-right: 6px;
+      margin-right: 5px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* 열차 목록 */
     #train-section { display: none; }
+    .train-meta { font-size: 0.75rem; color: #a0aec0; margin-bottom: 10px; }
 
-    .train-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 4px;
-    }
+    .train-grid { display: flex; flex-direction: column; gap: 7px; }
 
     .train-card {
       border: 2px solid #e2e8f0;
       border-radius: 9px;
-      padding: 12px 14px;
+      padding: 11px 14px;
       cursor: pointer;
       transition: border-color 0.15s, background 0.15s;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
-    .train-card:hover               { border-color: #90cdf4; background: #ebf8ff; }
-    .train-card.selected            { border-color: #3b82f6; background: #ebf8ff; }
-    .train-card.no-seat             { opacity: 0.5; cursor: default; }
-    .train-card.no-seat:hover       { border-color: #e2e8f0; background: #fff; }
+    .train-card:hover    { border-color: #90cdf4; background: #ebf8ff; }
+    .train-card.selected { border-color: #3b82f6; background: #ebf8ff; }
 
     .train-no {
-      font-size: 1rem;
+      font-size: 0.88rem;
       font-weight: 700;
       color: #1a3c6e;
-      min-width: 48px;
+      min-width: 46px;
       text-align: center;
+      line-height: 1.3;
     }
     .train-times { flex: 1; }
-    .train-times .time-row {
+    .time-row {
       font-size: 1rem;
       font-weight: 600;
       color: #2d3748;
     }
-    .train-times .time-row span { color: #718096; font-size: 0.78rem; font-weight: 400; margin: 0 4px; }
-    .train-times .station-row {
-      font-size: 0.75rem;
-      color: #a0aec0;
-      margin-top: 2px;
-    }
-    .seat-badge {
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 3px 9px;
-      border-radius: 99px;
-      white-space: nowrap;
-    }
-    .seat-badge.avail   { background: #c6f6d5; color: #276749; }
-    .seat-badge.unavail { background: #e2e8f0; color: #718096; }
+    .time-row .arrow { color: #a0aec0; font-size: 0.8rem; margin: 0 4px; }
+    .station-row { font-size: 0.73rem; color: #a0aec0; margin-top: 2px; }
 
-    .empty-msg { text-align: center; color: #a0aec0; font-size: 0.85rem; padding: 20px 0; }
+    .empty-msg { text-align: center; color: #a0aec0; font-size: 0.85rem; padding: 18px 0; }
 
     /* 예약 섹션 */
     #book-section { display: none; }
@@ -189,8 +182,8 @@
       padding: 10px 14px;
       font-size: 0.83rem;
       color: #2a4365;
-      margin-bottom: 4px;
     }
+    .book-note { font-size: 0.73rem; color: #a0aec0; margin-top: 8px; }
 
     /* 최근 실행 */
     #run-list { list-style: none; }
@@ -198,67 +191,64 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 9px 0;
+      padding: 8px 0;
       border-bottom: 1px solid #f0f4f8;
-      font-size: 0.81rem;
+      font-size: 0.8rem;
       color: #4a5568;
     }
     #run-list li:last-child { border-bottom: none; }
     .badge {
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 99px;
+      font-size: 0.68rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 99px;
     }
     .badge.success     { background: #c6f6d5; color: #276749; }
     .badge.failure     { background: #fed7d7; color: #742a2a; }
-    .badge.in_progress, .badge.queued { background: #bee3f8; color: #2a4365; }
+    .badge.in_progress,
+    .badge.queued      { background: #bee3f8; color: #2a4365; }
     .badge.cancelled   { background: #e2e8f0; color: #718096; }
 
-    .refresh-btn {
-      background: none;
-      border: 1px solid #cbd5e0;
-      border-radius: 6px;
-      padding: 2px 9px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      color: #4a5568;
-      margin-left: auto;
+    .icon-btn {
+      background: none; border: 1px solid #cbd5e0;
+      border-radius: 6px; padding: 2px 8px;
+      font-size: 0.75rem; cursor: pointer; color: #4a5568;
     }
-    .refresh-btn:hover { background: #f0f4f8; }
+    .icon-btn:hover { background: #f0f4f8; }
 
-    footer { margin-top: 16px; font-size: 0.72rem; color: #a0aec0; text-align: center; }
+    footer { margin-top: 14px; font-size: 0.72rem; color: #a0aec0; text-align: center; }
     footer a { color: #3b82f6; text-decoration: none; }
   </style>
 </head>
 <body>
 
 <h1>🚄 KTX 특실 자동 예약</h1>
-<p class="subtitle">GitHub Actions 기반 · 희망 시간 이후 2시간 내 특실 조회 및 자동 예약</p>
+<p class="subtitle">매일 자정 7일치 시간표 자동 갱신 · 특실 빈 자리 감지 즉시 예약</p>
 
 <!-- ── 조회 카드 ── -->
-<div class="card" id="search-card">
-  <div class="card-title">🔍 열차 조회</div>
+<div class="card">
+  <div class="card-title">
+    🔍 열차 조회
+    <span class="schedule-badge loading" id="schedule-badge">시간표 로딩 중...</span>
+  </div>
 
   <div class="row">
     <div>
       <label for="dep_station">출발역</label>
-      <select id="dep_station"></select>
+      <select id="dep_station" onchange="onRouteChange()"></select>
     </div>
     <div>
       <label for="arr_station">도착역</label>
-      <select id="arr_station"></select>
+      <select id="arr_station" onchange="onRouteChange()"></select>
     </div>
   </div>
 
   <div class="row">
     <div>
       <label for="dep_date">날짜</label>
-      <input type="date" id="dep_date" />
+      <input type="date" id="dep_date" onchange="onRouteChange()" />
     </div>
     <div>
       <label for="dep_time">희망 시간 이후</label>
-      <input type="time" id="dep_time" value="06:00" />
+      <input type="time" id="dep_time" value="06:00" onchange="onRouteChange()" />
     </div>
   </div>
 
@@ -266,47 +256,58 @@
     <label for="pat">GitHub Personal Access Token</label>
     <span class="pat-toggle" onclick="togglePat()">👁 보기/숨기기</span>
   </div>
-  <input type="password" id="pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+  <input type="password" id="pat" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" oninput="savePat(this.value)" />
   <p class="hint">
-    브라우저에만 저장되며 서버로 전송되지 않습니다. &nbsp;
+    브라우저에만 저장 · 서버 전송 없음 &nbsp;
     <a href="https://github.com/settings/tokens/new?scopes=repo,workflow&description=KTX-booker" target="_blank">토큰 발급 →</a>
   </p>
 
-  <button class="btn btn-search" id="search-btn" onclick="doSearch()">🔍 열차 조회</button>
-  <div id="search-status"><span class="spinner"></span><span id="status-msg">조회 준비 중...</span></div>
+  <!-- 실시간 조회 fallback (사전 스케줄 없을 때만 표시) -->
+  <button class="btn btn-live" id="live-btn" style="display:none" onclick="doLiveSearch()">
+    🌐 실시간 조회 (이 구간은 사전 데이터 없음)
+  </button>
+  <div id="live-status"><span class="spinner"></span><span id="live-msg">조회 중...</span></div>
   <div class="toast" id="search-toast"></div>
 </div>
 
 <!-- ── 열차 선택 카드 ── -->
 <div class="card" id="train-section">
-  <div class="card-title">🚉 열차 선택 <small id="train-range" style="font-weight:400;color:#a0aec0;font-size:0.78rem;"></small></div>
+  <div class="card-title">
+    🚉 열차 선택
+    <span style="font-size:0.75rem;font-weight:400;color:#a0aec0;" id="time-range-label"></span>
+  </div>
+  <p class="train-meta" id="train-meta"></p>
   <div class="train-grid" id="train-grid"></div>
 </div>
 
 <!-- ── 예약 카드 ── -->
 <div class="card" id="book-section">
   <div class="card-title">✅ 예약 봇 시작</div>
-  <div class="selected-info" id="selected-info">선택된 열차 없음</div>
-  <p class="hint" style="margin-top:6px;">봇이 해당 열차의 특실 빈 자리를 감지하면 즉시 예약하고 텔레그램으로 알립니다.</p>
+  <div class="selected-info" id="selected-info"></div>
+  <p class="book-note">봇이 해당 열차의 특실 빈 자리를 감지하는 즉시 예약하고 텔레그램으로 알립니다.</p>
   <button class="btn btn-book" id="book-btn" onclick="doBook()" disabled>🚀 예약 봇 시작</button>
   <div class="toast" id="book-toast"></div>
 </div>
 
-<!-- ── 최근 실행 현황 ── -->
+<!-- ── 최근 실행 ── -->
 <div class="card">
-  <div class="card-title">📋 최근 실행 현황 <button class="refresh-btn" onclick="loadRuns()">↻</button></div>
-  <ul id="run-list"><li style="color:#a0aec0;">토큰을 입력하면 실행 목록이 표시됩니다.</li></ul>
+  <div class="card-title">
+    📋 최근 실행 현황
+    <button class="icon-btn" onclick="loadRuns()">↻ 새로고침</button>
+  </div>
+  <ul id="run-list"><li style="color:#a0aec0;">토큰을 입력하면 표시됩니다.</li></ul>
 </div>
 
 <footer>
   <a href="https://github.com/jung372/KTX-booker" target="_blank">GitHub 저장소</a> ·
-  조회 및 예약은 GitHub Actions 서버에서 처리됩니다
+  시간표는 매일 자정 자동 갱신 · 특실 가용 여부는 예약 시 실시간 확인
 </footer>
 
 <script>
-  const REPO        = 'jung372/KTX-booker';
-  const WF_SEARCH   = 'ktx_search.yml';
-  const WF_BOOK     = 'ktx_bot.yml';
+  const REPO      = 'jung372/KTX-booker';
+  const WF_SEARCH = 'ktx_search.yml';
+  const WF_BOOK   = 'ktx_bot.yml';
+  const RAW_BASE  = `https://raw.githubusercontent.com/${REPO}/main`;
 
   const STATIONS = [
     '서울','용산','영등포','수원','천안아산','오송','대전',
@@ -316,51 +317,153 @@
     '청량리','상봉'
   ];
 
+  let scheduleData = null;
   let selectedTrain = null;
 
   // ── 초기화 ──────────────────────────────────────────
   function init() {
     STATIONS.forEach(s => {
       ['dep_station','arr_station'].forEach(id => {
-        const opt = document.createElement('option');
-        opt.value = opt.textContent = s;
-        document.getElementById(id).appendChild(opt);
+        const o = document.createElement('option');
+        o.value = o.textContent = s;
+        document.getElementById(id).appendChild(o);
       });
     });
     document.getElementById('arr_station').value = '부산';
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    document.getElementById('dep_date').value = tomorrow.toISOString().slice(0,10);
+    const d = new Date(); d.setDate(d.getDate() + 1);
+    document.getElementById('dep_date').value = d.toISOString().slice(0,10);
     document.getElementById('pat').value = loadPat();
     if (loadPat()) loadRuns();
+    loadSchedule();
   }
 
-  // ── PAT ─────────────────────────────────────────────
-  function savePat(v) { localStorage.setItem('ktx_pat', v); }
-  function loadPat()  { return localStorage.getItem('ktx_pat') || ''; }
-  function togglePat() {
-    const el = document.getElementById('pat');
-    el.type = el.type === 'password' ? 'text' : 'password';
-  }
-  function getPat() {
-    const v = document.getElementById('pat').value.trim();
-    if (v) savePat(v);
-    return v;
-  }
-  function headers() {
-    return { 'Authorization': `Bearer ${getPat()}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+  // ── 시간표 로드 ──────────────────────────────────────
+  async function loadSchedule() {
+    const badge = document.getElementById('schedule-badge');
+    try {
+      // 날짜 기반 캐시 버스터 (하루 단위 갱신)
+      const today = new Date().toISOString().slice(0, 10);
+      const res = await fetch(`${RAW_BASE}/data/schedules.json?v=${today}`);
+      const data = await res.json();
+
+      if (data.routes && Object.keys(data.routes).length > 0) {
+        scheduleData = data;
+        const dt = data.generated_at
+          ? new Date(data.generated_at).toLocaleString('ko-KR', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})
+          : '알 수 없음';
+        badge.textContent = `시간표 준비 (${dt} 기준)`;
+        badge.className = 'schedule-badge ready';
+        onRouteChange(); // 현재 선택에 맞게 즉시 표시
+      } else {
+        badge.textContent = '시간표 없음 (수동 조회 필요)';
+        badge.className = 'schedule-badge none';
+        showLiveButton(true);
+      }
+    } catch {
+      badge.textContent = '시간표 로드 실패';
+      badge.className = 'schedule-badge none';
+      showLiveButton(true);
+    }
   }
 
-  // ── 토스트 ───────────────────────────────────────────
-  function toast(id, msg, type, autoClear = false) {
-    const el = document.getElementById(id);
-    el.textContent = msg;
-    el.className = `toast ${type}`;
-    if (autoClear) setTimeout(() => { el.className = 'toast'; }, 6000);
+  // ── 역/날짜/시간 변경 시 즉시 반영 ──────────────────
+  function onRouteChange() {
+    const dep  = document.getElementById('dep_station').value;
+    const arr  = document.getElementById('arr_station').value;
+    const date = document.getElementById('dep_date').value;
+    const time = document.getElementById('dep_time').value;
+
+    if (!scheduleData || !date) return;
+
+    const key    = `${dep}>${arr}`;
+    const dayData = scheduleData.routes?.[key]?.[date];
+
+    if (dayData === undefined) {
+      // 이 구간은 사전 데이터 없음 → 실시간 조회 버튼 표시
+      showLiveButton(true);
+      document.getElementById('train-section').style.display = 'none';
+      document.getElementById('book-section').style.display  = 'none';
+      return;
+    }
+
+    showLiveButton(false);
+    const filtered = filterByTime(dayData, time);
+    renderTrains(filtered, dep, arr, time);
   }
 
-  // ── 조회 흐름 ────────────────────────────────────────
-  async function doSearch() {
+  function filterByTime(trains, depTime) {
+    const start = toMin(depTime);
+    if (start < 0) return trains;
+    const end = start + 120;
+    return trains.filter(t => {
+      const m = toMin(t.dep_time);
+      if (m < 0) return true;
+      if (end >= 24 * 60) return m >= start || m <= end - 24 * 60;
+      return m >= start && m <= end;
+    });
+  }
+
+  function showLiveButton(show) {
+    document.getElementById('live-btn').style.display = show ? 'block' : 'none';
+  }
+
+  // ── 열차 렌더링 ─────────────────────────────────────
+  function renderTrains(trains, dep, arr, depTime) {
+    selectedTrain = null;
+    document.getElementById('book-section').style.display = 'none';
+    document.getElementById('book-btn').disabled = true;
+
+    const [h, m] = depTime.split(':').map(Number);
+    const endH   = Math.floor((h * 60 + m + 120) / 60) % 24;
+    const endM   = (h * 60 + m + 120) % 60;
+    document.getElementById('time-range-label').textContent =
+      `${depTime} ~ ${pad(endH)}:${pad(endM)}`;
+
+    const isSchedule = !!scheduleData;
+    document.getElementById('train-meta').textContent = isSchedule
+      ? `※ 시간표 기준 · 특실 가용 여부는 예약 시 실시간 확인`
+      : `실시간 조회 결과`;
+
+    const grid = document.getElementById('train-grid');
+    grid.innerHTML = '';
+
+    if (!trains.length) {
+      grid.innerHTML = '<div class="empty-msg">해당 시간대 열차가 없습니다.</div>';
+      document.getElementById('train-section').style.display = 'block';
+      return;
+    }
+
+    trains.forEach(t => {
+      const card = document.createElement('div');
+      card.className = 'train-card';
+      card.innerHTML = `
+        <div class="train-no">KTX<br>${t.train_no}</div>
+        <div class="train-times">
+          <div class="time-row">${t.dep_time}<span class="arrow">→</span>${t.arr_time}</div>
+          <div class="station-row">${dep} → ${arr}</div>
+        </div>
+      `;
+      card.onclick = () => selectTrain(t, dep, arr, card);
+      grid.appendChild(card);
+    });
+
+    document.getElementById('train-section').style.display = 'block';
+    document.getElementById('search-toast').className = 'toast';
+  }
+
+  function selectTrain(t, dep, arr, card) {
+    document.querySelectorAll('.train-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    selectedTrain = { ...t, dep_station: dep, arr_station: arr };
+    document.getElementById('selected-info').textContent =
+      `KTX ${t.train_no} · ${t.dep_time} → ${t.arr_time} · ${dep} → ${arr}`;
+    document.getElementById('book-btn').disabled = false;
+    document.getElementById('book-section').style.display = 'block';
+    document.getElementById('book-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // ── 실시간 조회 (사전 데이터 없는 구간용) ───────────
+  async function doLiveSearch() {
     const pat = getPat();
     if (!pat) { toast('search-toast', 'GitHub Token을 입력하세요.', 'err'); return; }
 
@@ -371,164 +474,55 @@
 
     if (!dep_date) { toast('search-toast', '날짜를 입력하세요.', 'err'); return; }
 
-    // UI 초기화
+    document.getElementById('live-btn').disabled = true;
+    document.getElementById('live-status').style.display = 'block';
     document.getElementById('train-section').style.display = 'none';
     document.getElementById('book-section').style.display  = 'none';
     document.getElementById('search-toast').className = 'toast';
-    selectedTrain = null;
-
-    setSearching(true, '조회 요청 중...');
 
     try {
       const triggerTime = new Date().toISOString();
+      setLiveMsg('조회 요청 중...');
 
-      // 1. search workflow 트리거
-      const r1 = await fetch(
+      const r = await fetch(
         `https://api.github.com/repos/${REPO}/actions/workflows/${WF_SEARCH}/dispatches`,
-        { method: 'POST', headers: headers(),
+        { method: 'POST', headers: ghHeaders(),
           body: JSON.stringify({ ref: 'main', inputs: { dep_station, arr_station, dep_date, dep_time } }) }
       );
-      if (r1.status !== 204) {
-        const b = await r1.json().catch(() => ({}));
-        throw new Error(`트리거 실패 (${r1.status}): ${b.message || ''}`);
+      if (r.status !== 204) {
+        const b = await r.json().catch(() => ({}));
+        throw new Error(`트리거 실패 (${r.status}): ${b.message || ''}`);
       }
 
-      // 2. 새 run이 생성될 때까지 대기
-      setSearching(true, 'GitHub Actions 실행 대기 중...');
+      setLiveMsg('GitHub Actions 실행 대기 중...');
       const run = await waitForNewRun(WF_SEARCH, triggerTime);
+      const done = await waitRunCompletion(run.id);
+      if (done.conclusion !== 'success') throw new Error(`조회 실패. Actions 로그를 확인하세요.`);
 
-      // 3. run 완료 대기
-      const completed = await waitForCompletion(run.id);
-      if (completed.conclusion !== 'success') {
-        throw new Error(`조회 워크플로우 실패 (${completed.conclusion}). Actions 로그를 확인하세요.`);
-      }
-
-      // 4. 결과 파일 읽기
-      setSearching(true, '결과 불러오는 중...');
-      const result = await fetchSearchResults();
-
-      setSearching(false);
-      showTrains(result, dep_time);
+      setLiveMsg('결과 불러오는 중...');
+      const result = await fetchFileJSON('data/search_results.json');
+      document.getElementById('live-status').style.display = 'none';
+      document.getElementById('live-btn').disabled = false;
+      renderTrains(result.trains || [], dep_station, arr_station, dep_time);
       loadRuns();
-
     } catch (e) {
-      setSearching(false);
+      document.getElementById('live-status').style.display = 'none';
+      document.getElementById('live-btn').disabled = false;
       toast('search-toast', `오류: ${e.message}`, 'err');
     }
   }
 
-  function setSearching(on, msg = '') {
-    document.getElementById('search-btn').disabled = on;
-    document.getElementById('search-btn').textContent = on ? '⏳ 조회 중...' : '🔍 열차 조회';
-    const statusEl = document.getElementById('search-status');
-    statusEl.style.display = on ? 'block' : 'none';
-    if (msg) document.getElementById('status-msg').textContent = msg;
-  }
+  function setLiveMsg(msg) { document.getElementById('live-msg').textContent = msg; }
 
-  async function waitForNewRun(workflow, afterTime, maxWait = 60) {
-    for (let i = 0; i < maxWait; i++) {
-      await sleep(5000);
-      const res = await fetch(
-        `https://api.github.com/repos/${REPO}/actions/workflows/${workflow}/runs?per_page=1`,
-        { headers: headers() }
-      );
-      const data = await res.json();
-      const run  = data.workflow_runs?.[0];
-      if (run && new Date(run.created_at) > new Date(afterTime)) return run;
-    }
-    throw new Error('실행 대기 시간 초과 (5분)');
-  }
-
-  async function waitForCompletion(runId, maxWait = 120) {
-    for (let i = 0; i < maxWait; i++) {
-      await sleep(5000);
-      const elapsed = Math.round((i + 1) * 5 / 60 * 10) / 10;
-      setSearching(true, `열차 조회 중... (${elapsed}분 경과)`);
-      const res  = await fetch(
-        `https://api.github.com/repos/${REPO}/actions/runs/${runId}`,
-        { headers: headers() }
-      );
-      const run  = await res.json();
-      if (run.status === 'completed') return run;
-    }
-    throw new Error('조회 시간 초과 (10분)');
-  }
-
-  async function fetchSearchResults() {
-    const res  = await fetch(
-      `https://api.github.com/repos/${REPO}/contents/data/search_results.json`,
-      { headers: headers() }
-    );
-    const data = await res.json();
-    return JSON.parse(atob(data.content.replace(/\n/g, '')));
-  }
-
-  // ── 열차 표시 ────────────────────────────────────────
-  function showTrains(result, depTime) {
-    const trains  = result.trains || [];
-    const journey = result.journey || {};
-    const grid    = document.getElementById('train-grid');
-
-    // 시간 범위 표시
-    const [h, m]  = depTime.split(':').map(Number);
-    const endH    = Math.floor((h * 60 + m + 120) / 60) % 24;
-    const endM    = (h * 60 + m + 120) % 60;
-    document.getElementById('train-range').textContent =
-      `${depTime} ~ ${String(endH).padStart(2,'0')}:${String(endM).padStart(2,'0')} (2시간)`;
-
-    grid.innerHTML = '';
-
-    if (!trains.length) {
-      grid.innerHTML = '<div class="empty-msg">해당 시간대에 조회된 열차가 없습니다.</div>';
-      document.getElementById('train-section').style.display = 'block';
-      return;
-    }
-
-    trains.forEach(t => {
-      const avail = t.special_available;
-      const card  = document.createElement('div');
-      card.className = `train-card${avail ? '' : ' no-seat'}`;
-      card.dataset.trainNo = t.train_no;
-      card.innerHTML = `
-        <div class="train-no">KTX<br>${t.train_no}</div>
-        <div class="train-times">
-          <div class="time-row">${t.dep_time}<span>→</span>${t.arr_time}</div>
-          <div class="station-row">${journey.dep_station || ''} → ${journey.arr_station || ''}</div>
-        </div>
-        <div class="seat-badge ${avail ? 'avail' : 'unavail'}">${avail ? '특실 있음' : '특실 없음'}</div>
-      `;
-      if (avail) {
-        card.onclick = () => selectTrain(t, card);
-      }
-      grid.appendChild(card);
-    });
-
-    document.getElementById('train-section').style.display = 'block';
-  }
-
-  function selectTrain(t, card) {
-    document.querySelectorAll('.train-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedTrain = t;
-
-    document.getElementById('selected-info').textContent =
-      `KTX ${t.train_no} · ${t.dep_time} → ${t.arr_time} · 특실`;
-    document.getElementById('book-btn').disabled = false;
-    document.getElementById('book-section').style.display = 'block';
-    document.getElementById('book-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  // ── 예약 흐름 ────────────────────────────────────────
+  // ── 예약 ────────────────────────────────────────────
   async function doBook() {
     if (!selectedTrain) return;
     const pat = getPat();
     if (!pat) { toast('book-toast', 'GitHub Token을 입력하세요.', 'err'); return; }
 
-    const dep_station    = document.getElementById('dep_station').value;
-    const arr_station    = document.getElementById('arr_station').value;
-    const dep_date       = document.getElementById('dep_date').value;
-    const dep_time       = document.getElementById('dep_time').value;
-    const target_train_no = selectedTrain.train_no;
+    const dep_date = document.getElementById('dep_date').value;
+    const dep_time = document.getElementById('dep_time').value;
+    const { dep_station, arr_station, train_no } = selectedTrain;
 
     document.getElementById('book-btn').disabled = true;
     document.getElementById('book-btn').textContent = '⏳ 요청 중...';
@@ -536,12 +530,12 @@
     try {
       const res = await fetch(
         `https://api.github.com/repos/${REPO}/actions/workflows/${WF_BOOK}/dispatches`,
-        { method: 'POST', headers: headers(),
+        { method: 'POST', headers: ghHeaders(),
           body: JSON.stringify({ ref: 'main',
-            inputs: { dep_station, arr_station, dep_date, dep_time, target_train_no } }) }
+            inputs: { dep_station, arr_station, dep_date, dep_time, target_train_no: train_no } }) }
       );
       if (res.status === 204) {
-        toast('book-toast', `✅ KTX ${target_train_no} 예약 봇이 시작됐습니다! 텔레그램으로 결과를 알려드립니다.`, 'ok');
+        toast('book-toast', `✅ KTX ${train_no} 예약 봇 시작! 텔레그램으로 결과를 알려드립니다.`, 'ok');
         setTimeout(loadRuns, 3000);
       } else {
         const b = await res.json().catch(() => ({}));
@@ -555,39 +549,37 @@
     }
   }
 
-  // ── 최근 실행 현황 ───────────────────────────────────
+  // ── 최근 실행 ────────────────────────────────────────
   async function loadRuns() {
     const pat = getPat() || loadPat();
     if (!pat) return;
     const list = document.getElementById('run-list');
     list.innerHTML = '<li style="color:#a0aec0;">불러오는 중...</li>';
-
     try {
-      // 조회 + 예약 워크플로우 모두 가져오기
-      const [r1, r2] = await Promise.all([
-        fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WF_SEARCH}/runs?per_page=3`, { headers: headers() }),
-        fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${WF_BOOK}/runs?per_page=3`,   { headers: headers() }),
-      ]);
-      const d1 = await r1.json();
-      const d2 = await r2.json();
-      const runs = [
-        ...(d1.workflow_runs || []).map(r => ({ ...r, wf: '조회' })),
-        ...(d2.workflow_runs || []).map(r => ({ ...r, wf: '예약' })),
-      ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 6);
+      const wfs = [WF_SEARCH, WF_BOOK, 'ktx_schedule.yml'];
+      const labels = { [WF_SEARCH]: '조회', [WF_BOOK]: '예약', 'ktx_schedule.yml': '시간표' };
+      const results = await Promise.all(wfs.map(wf =>
+        fetch(`https://api.github.com/repos/${REPO}/actions/workflows/${wf}/runs?per_page=2`, { headers: ghHeaders() })
+          .then(r => r.json())
+          .then(d => (d.workflow_runs || []).map(r => ({ ...r, wf: labels[wf] })))
+      ));
+      const runs = results.flat()
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+        .slice(0, 6);
 
       if (!runs.length) { list.innerHTML = '<li style="color:#a0aec0;">실행 기록 없음</li>'; return; }
 
-      const label = { success: '완료', failure: '실패', cancelled: '취소', in_progress: '실행 중', queued: '대기 중' };
+      const lbl = { success:'완료', failure:'실패', cancelled:'취소', in_progress:'실행 중', queued:'대기 중' };
       list.innerHTML = runs.map(r => {
-        const status = r.status === 'completed' ? r.conclusion : r.status;
-        const date   = new Date(r.created_at).toLocaleString('ko-KR', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+        const s    = r.status === 'completed' ? r.conclusion : r.status;
+        const date = new Date(r.created_at).toLocaleString('ko-KR', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
         return `<li>
           <span>
-            <span style="font-size:0.7rem;background:#e2e8f0;border-radius:4px;padding:1px 5px;margin-right:4px;">${r.wf}</span>
+            <span style="font-size:0.68rem;background:#e2e8f0;border-radius:4px;padding:1px 5px;margin-right:4px;">${r.wf}</span>
             <a href="${r.html_url}" target="_blank" style="color:#3b82f6;text-decoration:none;">#${r.run_number}</a>
             &nbsp;${date}
           </span>
-          <span class="badge ${status}">${label[status] || status}</span>
+          <span class="badge ${s}">${lbl[s] || s}</span>
         </li>`;
       }).join('');
     } catch {
@@ -595,7 +587,56 @@
     }
   }
 
+  // ── GitHub API 유틸 ──────────────────────────────────
+  async function waitForNewRun(wf, after, max = 60) {
+    for (let i = 0; i < max; i++) {
+      await sleep(5000);
+      const d = await fetch(
+        `https://api.github.com/repos/${REPO}/actions/workflows/${wf}/runs?per_page=1`,
+        { headers: ghHeaders() }
+      ).then(r => r.json());
+      const run = d.workflow_runs?.[0];
+      if (run && new Date(run.created_at) > new Date(after)) return run;
+    }
+    throw new Error('실행 대기 시간 초과');
+  }
+
+  async function waitRunCompletion(id, max = 120) {
+    for (let i = 0; i < max; i++) {
+      await sleep(5000);
+      setLiveMsg(`실행 중... (${Math.round((i+1)*5/60*10)/10}분 경과)`);
+      const r = await fetch(`https://api.github.com/repos/${REPO}/actions/runs/${id}`, { headers: ghHeaders() }).then(r => r.json());
+      if (r.status === 'completed') return r;
+    }
+    throw new Error('시간 초과');
+  }
+
+  async function fetchFileJSON(path) {
+    const d = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`, { headers: ghHeaders() }).then(r => r.json());
+    return JSON.parse(atob(d.content.replace(/\n/g, '')));
+  }
+
+  // ── 공통 유틸 ────────────────────────────────────────
+  function toMin(t) {
+    if (!t) return -1;
+    try { const [h, m] = t.trim().split(':'); return +h * 60 + +m; } catch { return -1; }
+  }
+  function pad(n) { return String(n).padStart(2, '0'); }
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  function ghHeaders() {
+    return { 'Authorization': `Bearer ${getPat()}`, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' };
+  }
+
+  function getPat()  { const v = document.getElementById('pat').value.trim(); return v; }
+  function savePat(v) { if (v) localStorage.setItem('ktx_pat', v); }
+  function loadPat()  { return localStorage.getItem('ktx_pat') || ''; }
+  function togglePat() { const e = document.getElementById('pat'); e.type = e.type === 'password' ? 'text' : 'password'; }
+
+  function toast(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg; el.className = `toast ${type}`;
+  }
 
   init();
 </script>
