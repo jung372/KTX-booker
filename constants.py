@@ -1,7 +1,7 @@
 # 코레일 역 코드 및 고정 URL 상수
 
-KORAIL_MAIN_URL  = "https://www.korail.com"
-KORAIL_LOGIN_URL = "https://www.korail.com/korail/com/login.do"
+KORAIL_MAIN_URL   = "https://www.korail.com"
+KORAIL_LOGIN_URL  = "https://www.korail.com"          # SPA: 메인에서 로그인
 KORAIL_TICKET_URL = "https://www.korail.com/ebizprd/EbizPrdTicketpr21100W.do"
 
 # 주요 역 코드 (코레일 기준)

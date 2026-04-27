@@ -34,28 +34,19 @@ def create_browser(playwright):
 
 
 def login(page, korail_id: str, korail_pw: str) -> bool:
-    """코레일에 로그인합니다."""
-    # 새 korail.com(SPA) 및 구 letskorail.com 모두 시도하는 선택자 목록
+    """코레일에 로그인합니다. 메인 페이지 → 로그인 버튼 클릭 → 폼 입력."""
     _ID_SELECTORS = [
-        "#txtMember",          # 구 letskorail.com
-        "#loginForm_memberNo", # korail.com 변형 1
-        "#memberNo",
-        "#userId",
-        "#id",
-        "input[name='memberNo']",
-        "input[name='userId']",
-        "input[name='id']",
-        "input[placeholder*='아이디']",
-        "input[placeholder*='이메일']",
-        "input[type='text']:visible",  # 최후 수단
+        "#txtMember",
+        "#memberNo", "#loginForm_memberNo",
+        "#userId", "#id",
+        "input[name='memberNo']", "input[name='userId']", "input[name='id']",
+        "input[placeholder*='아이디']", "input[placeholder*='이메일']",
+        "input[type='text']:visible",
     ]
     _PW_SELECTORS = [
-        "#txtPwd",             # 구 letskorail.com
-        "#loginForm_pwd",
-        "#pwd",
-        "#userPw",
-        "input[name='pwd']",
-        "input[name='userPw']",
+        "#txtPwd",
+        "#loginForm_pwd", "#pwd", "#userPw",
+        "input[name='pwd']", "input[name='userPw']",
         "input[type='password']:visible",
     ]
     _BTN_SELECTORS = [
@@ -63,55 +54,68 @@ def login(page, korail_id: str, korail_pw: str) -> bool:
         "button[type='submit']",
         "input[type='submit']",
         "button:has-text('로그인')",
-        "a:has-text('로그인'):visible",
+    ]
+    # 메인 페이지에서 로그인 화면으로 이동시키는 링크/버튼
+    _GOTO_LOGIN_SELECTORS = [
+        "a:has-text('로그인')",
+        "button:has-text('로그인')",
+        "[href*='login']",
+        ".login",
     ]
 
     try:
-        logger.info(f"로그인 페이지 접속: {KORAIL_LOGIN_URL}")
+        # ── Step 1: 메인 페이지 로드 ───────────────────
+        logger.info(f"메인 페이지 접속: {KORAIL_LOGIN_URL}")
         page.goto(KORAIL_LOGIN_URL, timeout=LOGIN_WAIT_TIMEOUT * 1000,
                   wait_until="domcontentloaded")
-        # SPA 렌더링 대기
         page.wait_for_load_state("networkidle", timeout=LOGIN_WAIT_TIMEOUT * 1000)
-        _random_delay(1.5, 2.5)
+        _random_delay(2.0, 3.0)
+        _save_screenshot(page, "debug_step1_main.png")
+        logger.info(f"Step1 URL: {page.url}  타이틀: {page.title()}")
 
-        logger.info(f"현재 URL: {page.url}  /  타이틀: {page.title()}")
+        # ── Step 2: 로그인 링크 클릭 (없으면 이미 로그인 폼) ──
+        nav_sel = _find_selector(page, _GOTO_LOGIN_SELECTORS)
+        if nav_sel:
+            logger.info(f"로그인 링크 클릭: {nav_sel}")
+            page.click(nav_sel)
+            page.wait_for_load_state("networkidle", timeout=LOGIN_WAIT_TIMEOUT * 1000)
+            _random_delay(1.5, 2.5)
+            _save_screenshot(page, "debug_step2_login_page.png")
+            logger.info(f"Step2 URL: {page.url}  타이틀: {page.title()}")
+        else:
+            logger.info("로그인 링크 없음 — 현재 페이지에서 폼 탐색")
 
-        # ── 아이디 입력란 탐색 ──────────────────────────
+        # ── Step 3: 아이디 입력 ────────────────────────
         id_sel = _find_selector(page, _ID_SELECTORS)
         if not id_sel:
             _save_screenshot(page, "debug_login_no_id.png")
-            logger.error("아이디 입력란을 찾지 못했습니다. 스크린샷을 확인하세요.")
+            logger.error("아이디 입력란 없음 — 스크린샷 확인 필요")
             return False
-
         page.fill(id_sel, korail_id)
         _random_delay(0.3, 0.8)
 
-        # ── 비밀번호 입력란 탐색 ───────────────────────
+        # ── Step 4: 비밀번호 입력 ─────────────────────
         pw_sel = _find_selector(page, _PW_SELECTORS)
         if not pw_sel:
             _save_screenshot(page, "debug_login_no_pw.png")
-            logger.error("비밀번호 입력란을 찾지 못했습니다. 스크린샷을 확인하세요.")
+            logger.error("비밀번호 입력란 없음 — 스크린샷 확인 필요")
             return False
-
         page.fill(pw_sel, korail_pw)
         _random_delay(0.5, 1.0)
 
-        # ── 로그인 버튼 클릭 ───────────────────────────
+        # ── Step 5: 로그인 버튼 클릭 ──────────────────
         btn_sel = _find_selector(page, _BTN_SELECTORS)
         if not btn_sel:
             _save_screenshot(page, "debug_login_no_btn.png")
-            logger.error("로그인 버튼을 찾지 못했습니다. 스크린샷을 확인하세요.")
+            logger.error("로그인 버튼 없음 — 스크린샷 확인 필요")
             return False
-
         page.click(btn_sel)
         page.wait_for_load_state("networkidle", timeout=LOGIN_WAIT_TIMEOUT * 1000)
+        _save_screenshot(page, "debug_step5_after_login.png")
+        logger.info(f"로그인 후 URL: {page.url}  타이틀: {page.title()}")
 
-        title = page.title()
-        url   = page.url
-        logger.info(f"로그인 후 URL: {url}  /  타이틀: {title}")
-
-        if "로그인" in title or "login" in url.lower():
-            _save_screenshot(page, "debug_login_failed.png")
+        # ── Step 6: 성공 여부 판단 ────────────────────
+        if "로그인" in page.title() or "login" in page.url.lower():
             logger.error("로그인 실패: 아이디 또는 비밀번호를 확인하세요.")
             return False
 
